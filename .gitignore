@@ -3,49 +3,6 @@
 .venv
 
 *.pyc
-
-# ===========================================
-# Jenkins 敏感数据
-# ===========================================
-jenkins_home/secret.key
-jenkins_home/secret.key.not-so-secret
-jenkins_home/secrets/
-jenkins_home/*.key
-
-# 用户数据（密码哈希）
-jenkins_home/users/
-
-# ===========================================
-# Jenkins 运行时数据
-# ===========================================
-# Web 应用资源（5000+ 文件）
-jenkins_home/war/
-
-# 构建相关
-jenkins_home/jobs/*/builds/
-jenkins_home/jobs/*/workspace/
-jenkins_home/jobs/*/lastStable
-jenkins_home/jobs/*/lastSuccessful
-
-# 日志和临时文件
-jenkins_home/logs/
-jenkins_home/.owner
-jenkins_home/queue.xml
-jenkins_home/updates/
-jenkins_home/fingerprints/
-jenkins_home/caches/
-
-# ===========================================
-# 允许提交的配置文件（可选）
-# ===========================================
-# 如果需要版本控制配置，取消下面的注释
-# !jenkins_home/
-# !jenkins_home/config.xml
-# !jenkins_home/jobs/
-# !jenkins_home/jobs/*/
-# !jenkins_home/jobs/*/config.xml
-
-# ===========================================
 # Python
 # ===========================================
 .venv/
@@ -82,3 +39,5 @@ logs/
 # ===========================================
 .env
 !.env.example
+
+jenkins_home/
