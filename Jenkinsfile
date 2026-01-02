@@ -12,8 +12,9 @@ pipeline {
         RUNNER_IMAGE = "odm_device_runner:v1.0"
         ANALYZER_IMAGE = "odm_quality_guard:v1.0"
 
-        TARGET_SERIAL = "jenkins_report_test_001"
-        LOG_FILENAME = "device_jenkins_report_test_001.log"
+        //  TODO:add logic to detect agent OS
+        TARGET_SERIAL = "D3H7N17B25007986"
+        LOG_FILENAME = "device_D3H7N17B25007986.log"
     }
 
     stages {
@@ -30,6 +31,7 @@ pipeline {
                 sh """
                     docker run --rm \
                     -e SERIAL=${TARGET_SERIAL} \
+                    -e ADB_SERVER_SOCKET=tcp:host.docker.internal:5037 \
                     -v ${HOST_LOG_PATH}:/app/log \
                     ${RUNNER_IMAGE}
                 """
