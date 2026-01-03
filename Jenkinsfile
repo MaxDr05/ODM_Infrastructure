@@ -36,6 +36,11 @@ pipeline {
         }
 
         stage('Distributed Testing') {
+            // 容错点 E: 全局超时熔断
+            // 冒烟测试一般 5 分钟，我们给 10 分钟 Buffer。超过直接 Kill。
+            options {
+                timeout(time: 10, unit: 'MINUTES')
+            }
             // 【修正 1】parallel 块结构
             parallel {
                 stage('Real Steel') {
