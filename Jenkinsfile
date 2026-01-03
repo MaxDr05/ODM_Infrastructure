@@ -60,7 +60,7 @@ pipeline {
             steps {
                 // 【修正 3】Fan-In 聚合分析
                 // 不再传 specific filename，而是传目录 /app/log
-                // 注意：这里的前提是你的 Python 代码得改为扫描这个目录
+                // 注意：这里的前提是Python 代码得改为扫描这个目录
                 sh """
                     docker run --rm \
                     -v ${HOST_LOG_PATH}:/app/log \
