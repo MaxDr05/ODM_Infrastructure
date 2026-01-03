@@ -3,7 +3,13 @@
 **基于 Docker 容器化的 Android 并行测试与日志分析基础设施**
 
 > **Note to Reviewers**: 本项目为分布式测试系统的**核心架构原型 (Proof of Concept)**。它抽取了大规模 ODM 设备测试中的核心调度逻辑与容错机制，移除了复杂的 Web UI 与持久化存储层，旨在演示**容器隔离**、**并行编排**以及**流式日志分析**的设计模式。
+### 核心组件仓库
+本仓库 (`odm_infrastructure`) 是系统的**编排层**，底层依赖以下两个独立组件：
 
+| 组件名称 | 仓库地址 | 职责 | 核心技术 |
+| :--- | :--- | :--- | :--- |
+| **执行器 (Runner)** | [**maxdr05/odm_device_runner**](https://github.com/maxdr05/odm_device_runner) | 负责 ADB 隔离、设备保活与测试注入。 | Docker, Shell, ADB |
+| **分析器 (Guard)** | [**maxdr05/odm_quality_guard**](https://github.com/maxdr05/odm_quality_guard) | 负责流式日志分析与质量门禁判定。 | Python 3.10, Pytest, Generator |
 ---
 
 ## 1. 项目背景与设计目标
