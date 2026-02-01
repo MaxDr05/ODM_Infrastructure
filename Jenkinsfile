@@ -10,6 +10,9 @@ pipeline {
         RUNNER_IMAGE = "odm_device_runner:v1.0"
         ANALYZER_IMAGE = "odm_quality_guard:v1.0"
 
+        // 服务名
+        SCHEDULER_SERVICE = "scheduler"
+
         // 真机配置
         TARGET_SERIAL = "D3H7N17B25007986"
 
@@ -35,39 +38,17 @@ pipeline {
             }
         }
 
-        stage('Distributed Testing') {
-            // 容错点 E: 全局超时熔断
-            // 冒烟测试一般 5 分钟，我们给 10 分钟 Buffer。超过直接 Kill。
-            options {
-                timeout(time: 10, unit: 'MINUTES')
-            }
-            // 【修正 1】parallel 块结构
-            parallel {
-                stage('Real Steel') {
-                    // 【修正 2】必须有 steps 块
-                    steps {
-                        sh """
-                            docker run --rm \
-                            -e SERIAL=${TARGET_SERIAL} \
-                            -e ADB_SERVER_SOCKET=tcp:host.docker.internal:5037 \
-                            -v ${HOST_LOG_PATH}:/app/log \
-                            ${RUNNER_IMAGE}
-                        """
-                    }
+        stage('Run Device Tests') {
+            steps{
+                script{
+                    echo "🚀 Launching Scheduler Service..."
+                    // [核心动作] 使用 Docker Compose 启动调度器
+                    // --rm: 跑完就销毁容器
+                    // 这里的 logs 目录已经在 docker-compose.yml 里映射好了
+                    sh "docker-compose run --rm ${SCHEDULER_SERVICE}"
                 }
+            }
 
-                stage('Virtual Warrior') {
-                    steps {
-                        sh """
-                            docker run --rm \
-                            -e SERIAL=${VIRTUAL_DEVICE} \
-                            -e ADB_SERVER_SOCKET=tcp:host.docker.internal:5037 \
-                            -v ${HOST_LOG_PATH}:/app/log \
-                            ${RUNNER_IMAGE}
-                        """
-                    }
-                }
-            }
         }
 
         stage('Quality Gate Analysis') {
