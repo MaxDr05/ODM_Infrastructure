@@ -40,10 +40,17 @@ pipeline {
         stage('Run Device Tests') {
             steps{
                 script{
-                    echo "🚀 Launching Scheduler Service..."
-                    // [核心动作] 使用 Docker Compose 启动调度器
-                    // --rm: 跑完就销毁容器
-                    // 这里的 logs 目录已经在 docker-compose.yml 里映射好了
+                    echo "Launching Scheduler Service..."
+
+                    // [Fix] 核心修复：手动拉取兄弟仓库的代码
+                    // 1. 清理可能存在的旧文件 (防止冲突)
+                    // 2. 将代码克隆到 ../odm_scheduler (满足 docker-compose.yml 里的相对路径要求)
+                    sh """
+                        rm -rf ../odm_scheduler
+                        git clone https://github.com/MaxDr05/ODM_Scheduler.git ../odm_scheduler
+                    """
+                    echo "Launching Python Scheduler..."
+
                     sh "docker-compose run --rm ${SCHEDULER_SERVICE}"
                 }
             }
