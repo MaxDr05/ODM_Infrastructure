@@ -51,7 +51,7 @@ pipeline {
                     """
                     echo "Launching Python Scheduler..."
 
-                    sh "docker-compose run --rm ${SCHEDULER_SERVICE}"
+                    sh "docker-compose run --rm --build ${SCHEDULER_SERVICE}"
                 }
             }
 
