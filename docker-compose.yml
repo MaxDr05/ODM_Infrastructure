@@ -22,3 +22,5 @@ services:
       - ${HOST_LOG_PATH:-../logs}:/app/log
     environment:
       - HOST_LOG_PATH=${HOST_LOG_PATH:-../logs}
+      - RUNNER_IMAGE=${RUNNER_IMAGE:-odm_device_runner:v1.0}
+      - ENV_TYPE=MOCK
