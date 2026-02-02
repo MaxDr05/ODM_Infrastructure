@@ -33,8 +33,7 @@ pipeline {
                     alpine sh -c "rm -f /app/log/*.log && rm -rf /app/report/*"
                 """
 
-                // 清理 Jenkins 自己的 workspace (为了下一次构建干净)
-                cleanWs()
+
             }
         }
 
@@ -80,6 +79,8 @@ pipeline {
             // 永久存档原始日志 (Artifacts)
             // 这样你可以在 Jenkins 每次构建的详情页右上角，下载到这次的所有 log
             archiveArtifacts artifacts: 'raw-logs/*.log', allowEmptyArchive: true
+            // 清理 Jenkins 自己的 workspace (为了下一次构建干净)
+            cleanWs()
         }
     }
 }
