@@ -41,3 +41,5 @@ logs/
 !.env.example
 
 jenkins_home/
+*.db
+dummy_report.json
