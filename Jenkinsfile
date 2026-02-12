@@ -2,9 +2,13 @@ pipeline {
     agent any
 
     environment {
-        // 宿主机路径
+        // 宿主机路径(docker run用)
         HOST_LOG_PATH = "/Users/calvin/code/logs"
         HOST_REPORT_PATH = "/Users/calvin/code/reports"
+
+        // Jenkins 容器内挂载路径（cp / python 用）
+        JENKINS_MOUNT_LOGS = "/var/odm_logs"
+        JENKINS_MOUNT_REPORTS = "/var/odm_reports"
 
         // 镜像定义
         RUNNER_IMAGE = "odm_device_runner:v1.0"
@@ -30,8 +34,14 @@ pipeline {
                     alpine sh -c "rm -f /app/log/*.log && rm -rf /app/report/*"
                 """
 
-                // 清理 Jenkins 自己的 workspace (为了下一次构建干净)
-                cleanWs()
+            }
+        }
+        stage('Initialize DB'){
+            steps{
+                script{
+                    echo "Initialize Database Entry..."
+                    sh "python3 db_manager.py init --batch_id ${env.BUILD_TAG}"
+                }
             }
         }
 
@@ -89,13 +99,15 @@ pipeline {
     post {
         always {
             script{
-                sh "mkdir -p allure-results"
+                echo "💾 Syncing Test Results to Database..."
+                // Jenkins 容器看不见 /Users/calvin，但它看得见 /var/odm_reports
+                sh "mkdir -p report"
                 sh "mkdir -p raw-logs"
-                //  把宿主机产生的数据（Reports + Logs）拷贝回 Jenkins Workspace
-                sh "cp -r /var/odm_reports/. allure-results/"
-                sh "cp -r /var/odm_logs/. raw-logs/"
+                // 使用 Jenkins 容器内的挂载路径进行拷贝
+                sh "cp -r ${JENKINS_MOUNT_REPORTS}/. report/"
+                sh "cp -r ${JENKINS_MOUNT_LOGS}/. raw-logs/"
             }
-            allure includeProperties: false, jdk: '', results: [[path: "allure-results"]]
+            allure includeProperties: false, jdk: '', results: [[path: "report"]]
             // 永久存档原始日志 (Artifacts)
             // 这样你可以在 Jenkins 每次构建的详情页右上角，下载到这次的所有 log
             archiveArtifacts artifacts: 'raw-logs/*.log', allowEmptyArchive: true

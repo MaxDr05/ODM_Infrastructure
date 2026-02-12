@@ -45,8 +45,10 @@ class DatabaseManager:
                     (batch_id,)
                 )
                 conn.commit()
+                return cur.lastrowid
         except sqlite3.IntegrityError as e:
             print("[WARN] Batch ID already exists")
+            return None
 
 
     def import_results(self,batch_id,json_path):
