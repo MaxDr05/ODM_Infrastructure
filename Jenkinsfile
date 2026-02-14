@@ -12,7 +12,7 @@ pipeline {
 
         // 镜像定义
         RUNNER_IMAGE = "odm_device_runner:v1.0"
-        ANALYZER_IMAGE = "odm_quality_guard:v1.0"
+        ANALYZER_IMAGE = "odm_quality_guard:v1.1"
 
         // 真机配置
         TARGET_SERIAL = "D3H7N17B25007986"
@@ -106,6 +106,8 @@ pipeline {
                 // 使用 Jenkins 容器内的挂载路径进行拷贝
                 sh "cp -r ${JENKINS_MOUNT_REPORTS}/. report/"
                 sh "cp -r ${JENKINS_MOUNT_LOGS}/. raw-logs/"
+
+                sh "python3 db_manager.py import --batch_id ${env.BUILD_TAG} --file_path ./report/summary.json"
             }
             allure includeProperties: false, jdk: '', results: [[path: "report"]]
             // 永久存档原始日志 (Artifacts)
